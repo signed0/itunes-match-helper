@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 #import "iTunes.h"
-#import "SBJson.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate,NSTableViewDelegate,NSTableViewDataSource> {
     

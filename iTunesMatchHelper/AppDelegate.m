@@ -132,6 +132,31 @@
     
 }
 
++ (NSMutableDictionary *)decodeJsonData:(NSData *)jsonData {
+    
+    if (jsonData == nil) {
+        NSLog(@"[%@ %@] JSON error: %@",
+              NSStringFromClass([self class]),
+              NSStringFromSelector(_cmd),
+              @"Json data was nil");
+        return nil;
+    }
+    
+    NSError *error = nil;
+    NSMutableDictionary *results = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                                   options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                     error:&error];
+    if (error) {
+        NSLog(@"[%@ %@] JSON error: %@",
+              NSStringFromClass([self class]),
+              NSStringFromSelector(_cmd),
+              error.localizedDescription);
+        return nil;
+    }
+    
+    return results;
+}
+
 - (IBAction)fetchLibrary:(id)sender {
     doCancel = NO;
     
@@ -193,7 +218,7 @@
                     if (doCancel)
                         [self.progressLabel setStringValue:@"Scanning canceled. Click 'Scan Library' to begin."];
                     else
-                        [self.progressLabel setStringValue:[NSString stringWithFormat:@"Scanning iTunes library song %i of %i...",z,fileListCount]];
+                        [self.progressLabel setStringValue:[NSString stringWithFormat:@"Scanning iTunes library song %i of %li...",z,fileListCount]];
                     [self.progressBar setDoubleValue:z];
                 });
                 
@@ -236,12 +261,10 @@
                 
                 //NSLog(@"Getting info for song %i of %lu (ID: %i / Name: %@)",y,[searchList count],[iTunesID intValue],[track name]);
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
-                    [self.progressLabel setStringValue:[NSString stringWithFormat:@"Fetching metadata for song %i of %i...",y+1,[searchList count]]];
+                    [self.progressLabel setStringValue:[NSString stringWithFormat:@"Fetching metadata for song %i of %li...",y+1,[searchList count]]];
                     [self.progressBar setDoubleValue:y+1];
                 });
                 
-                
-                SBJsonParser *parser = [[SBJsonParser alloc] init];
                 
                 NSString *urlString = [NSString stringWithFormat:@"http://itunes.apple.com/lookup?id=%i",[iTunesID intValue]];
                 
@@ -251,11 +274,7 @@
                 
                 NSData *response = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
                 
-                NSString *json_string = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-                
-                //NSLog(@"JSON String: %@",json_string);
-                
-                NSDictionary *songNewData = [parser objectWithString:json_string];
+                NSDictionary *songNewData = [AppDelegate decodeJsonData:response];
                 
                 
                 if ([[songNewData valueForKey:@"resultCount"] intValue] > 0) {
@@ -311,7 +330,7 @@
                 if (doCancel)
                     return;
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
-                    [self.progressLabel setStringValue:[NSString stringWithFormat:@"Updating metadata for song %i of %i...",z+1,[songData count]]];
+                    [self.progressLabel setStringValue:[NSString stringWithFormat:@"Updating metadata for song %i of %li...",z+1,[songData count]]];
                     [self.progressBar setDoubleValue:z+1];
                 });
                 NSArray *songInfo = [songData objectAtIndex:z];

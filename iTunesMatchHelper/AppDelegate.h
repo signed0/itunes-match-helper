@@ -7,16 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
+
+@class TrackView;
+
 #import "iTunes.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate,NSTableViewDelegate,NSTableViewDataSource> {
-    
-    NSMutableArray *songData;
-    
-    bool updatingLibrary;
-    bool canCancel;
-    bool doCancel;
-}
+@interface AppDelegate : NSObject <NSApplicationDelegate,NSTableViewDelegate,NSTableViewDataSource>
 
 @property (assign) IBOutlet NSWindow *window;
 @property (weak) IBOutlet NSProgressIndicator *progressBar;
@@ -24,9 +20,14 @@
 @property (weak) IBOutlet NSTableView *songTable;
 @property (weak) IBOutlet NSButton *scanButton;
 
+@property (weak) IBOutlet NSTextField *trackIdLabel;
+@property (weak) IBOutlet NSTextField *countryCodeLabel;
 
 - (IBAction)fetchLibrary:(id)sender;
 - (IBAction)checkAllItems:(id)sender;
 - (IBAction)uncheckAllItems:(id)sender;
+
+@property (weak) IBOutlet NSTableView *trackTableView;
+@property (weak) IBOutlet TrackView *trackView;
 
 @end

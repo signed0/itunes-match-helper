@@ -13,22 +13,12 @@
 		0942397A149D6D5000B75A38 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 09423978149D6D5000B75A38 /* Credits.rtf */; };
 		0942397D149D6D5000B75A38 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0942397C149D6D5000B75A38 /* AppDelegate.m */; };
 		09423980149D6D5000B75A38 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0942397E149D6D5000B75A38 /* MainMenu.xib */; };
-		09423988149D6D5000B75A38 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09423987149D6D5000B75A38 /* SenTestingKit.framework */; };
-		09423989149D6D5000B75A38 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09423969149D6D5000B75A38 /* Cocoa.framework */; };
-		09423991149D6D5000B75A38 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0942398F149D6D5000B75A38 /* InfoPlist.strings */; };
-		09423994149D6D5000B75A38 /* iTunesMatchHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09423993149D6D5000B75A38 /* iTunesMatchHelperTests.m */; };
 		094239A0149D707D00B75A38 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0942399F149D707D00B75A38 /* ScriptingBridge.framework */; };
+		D80D37DA15FBD6F800D320D7 /* iTunesApi.m in Sources */ = {isa = PBXBuildFile; fileRef = D80D37D915FBD6F800D320D7 /* iTunesApi.m */; };
+		D80D37DE15FBF85A00D320D7 /* iTunesLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = D80D37DD15FBF85A00D320D7 /* iTunesLibrary.m */; };
+		D80D37E115FC0D9F00D320D7 /* RowData.m in Sources */ = {isa = PBXBuildFile; fileRef = D80D37E015FC0D9E00D320D7 /* RowData.m */; };
+		D80D37E715FC591F00D320D7 /* TrackView.m in Sources */ = {isa = PBXBuildFile; fileRef = D80D37E615FC591F00D320D7 /* TrackView.m */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		0942398A149D6D5000B75A38 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0942395C149D6D5000B75A38 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 09423964149D6D5000B75A38;
-			remoteInfo = iTunesMatchHelper;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		09423965149D6D5000B75A38 /* iTunesMatchHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iTunesMatchHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,15 +34,18 @@
 		0942397B149D6D5000B75A38 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		0942397C149D6D5000B75A38 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		0942397F149D6D5000B75A38 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		09423986149D6D5000B75A38 /* iTunesMatchHelperTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iTunesMatchHelperTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		09423987149D6D5000B75A38 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		0942398E149D6D5000B75A38 /* iTunesMatchHelperTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iTunesMatchHelperTests-Info.plist"; sourceTree = "<group>"; };
-		09423990149D6D5000B75A38 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		09423992149D6D5000B75A38 /* iTunesMatchHelperTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iTunesMatchHelperTests.h; sourceTree = "<group>"; };
-		09423993149D6D5000B75A38 /* iTunesMatchHelperTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iTunesMatchHelperTests.m; sourceTree = "<group>"; };
 		0942399D149D6D6C00B75A38 /* iTunesMatchHelper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = iTunesMatchHelper.entitlements; sourceTree = "<group>"; };
-		0942399E149D6EDC00B75A38 /* iTunes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iTunes.h; sourceTree = "<group>"; };
+		0942399E149D6EDC00B75A38 /* iTunes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iTunes.h; path = iTunesMatchHelper/iTunes.h; sourceTree = "<group>"; };
 		0942399F149D707D00B75A38 /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
+		D80D37D815FBD6F800D320D7 /* iTunesApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iTunesApi.h; sourceTree = "<group>"; };
+		D80D37D915FBD6F800D320D7 /* iTunesApi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iTunesApi.m; sourceTree = "<group>"; };
+		D80D37DC15FBF85A00D320D7 /* iTunesLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iTunesLibrary.h; sourceTree = "<group>"; };
+		D80D37DD15FBF85A00D320D7 /* iTunesLibrary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iTunesLibrary.m; sourceTree = "<group>"; };
+		D80D37DF15FC0D9E00D320D7 /* RowData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RowData.h; sourceTree = "<group>"; };
+		D80D37E015FC0D9E00D320D7 /* RowData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RowData.m; sourceTree = "<group>"; };
+		D80D37E515FC591E00D320D7 /* TrackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackView.h; sourceTree = "<group>"; };
+		D80D37E615FC591F00D320D7 /* TrackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,15 +58,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		09423982149D6D5000B75A38 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				09423988149D6D5000B75A38 /* SenTestingKit.framework in Frameworks */,
-				09423989149D6D5000B75A38 /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -81,7 +65,6 @@
 			isa = PBXGroup;
 			children = (
 				0942396F149D6D5000B75A38 /* iTunesMatchHelper */,
-				0942398C149D6D5000B75A38 /* iTunesMatchHelperTests */,
 				09423968149D6D5000B75A38 /* Frameworks */,
 				09423966149D6D5000B75A38 /* Products */,
 			);
@@ -91,7 +74,6 @@
 			isa = PBXGroup;
 			children = (
 				09423965149D6D5000B75A38 /* iTunesMatchHelper.app */,
-				09423986149D6D5000B75A38 /* iTunesMatchHelperTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,6 +81,7 @@
 		09423968149D6D5000B75A38 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0942399E149D6EDC00B75A38 /* iTunes.h */,
 				0942399F149D707D00B75A38 /* ScriptingBridge.framework */,
 				09423969149D6D5000B75A38 /* Cocoa.framework */,
 				09423987149D6D5000B75A38 /* SenTestingKit.framework */,
@@ -120,10 +103,8 @@
 		0942396F149D6D5000B75A38 /* iTunesMatchHelper */ = {
 			isa = PBXGroup;
 			children = (
-				0942399E149D6EDC00B75A38 /* iTunes.h */,
+				D80D37DB15FBD70700D320D7 /* Classes */,
 				0942399D149D6D6C00B75A38 /* iTunesMatchHelper.entitlements */,
-				0942397B149D6D5000B75A38 /* AppDelegate.h */,
-				0942397C149D6D5000B75A38 /* AppDelegate.m */,
 				0942397E149D6D5000B75A38 /* MainMenu.xib */,
 				09423970149D6D5000B75A38 /* Supporting Files */,
 			);
@@ -142,23 +123,21 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		0942398C149D6D5000B75A38 /* iTunesMatchHelperTests */ = {
+		D80D37DB15FBD70700D320D7 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				09423992149D6D5000B75A38 /* iTunesMatchHelperTests.h */,
-				09423993149D6D5000B75A38 /* iTunesMatchHelperTests.m */,
-				0942398D149D6D5000B75A38 /* Supporting Files */,
+				0942397B149D6D5000B75A38 /* AppDelegate.h */,
+				0942397C149D6D5000B75A38 /* AppDelegate.m */,
+				D80D37D815FBD6F800D320D7 /* iTunesApi.h */,
+				D80D37D915FBD6F800D320D7 /* iTunesApi.m */,
+				D80D37DC15FBF85A00D320D7 /* iTunesLibrary.h */,
+				D80D37DD15FBF85A00D320D7 /* iTunesLibrary.m */,
+				D80D37DF15FC0D9E00D320D7 /* RowData.h */,
+				D80D37E015FC0D9E00D320D7 /* RowData.m */,
+				D80D37E515FC591E00D320D7 /* TrackView.h */,
+				D80D37E615FC591F00D320D7 /* TrackView.m */,
 			);
-			path = iTunesMatchHelperTests;
-			sourceTree = "<group>";
-		};
-		0942398D149D6D5000B75A38 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				0942398E149D6D5000B75A38 /* iTunesMatchHelperTests-Info.plist */,
-				0942398F149D6D5000B75A38 /* InfoPlist.strings */,
-			);
-			name = "Supporting Files";
+			name = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -181,32 +160,13 @@
 			productReference = 09423965149D6D5000B75A38 /* iTunesMatchHelper.app */;
 			productType = "com.apple.product-type.application";
 		};
-		09423985149D6D5000B75A38 /* iTunesMatchHelperTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0942399A149D6D5000B75A38 /* Build configuration list for PBXNativeTarget "iTunesMatchHelperTests" */;
-			buildPhases = (
-				09423981149D6D5000B75A38 /* Sources */,
-				09423982149D6D5000B75A38 /* Frameworks */,
-				09423983149D6D5000B75A38 /* Resources */,
-				09423984149D6D5000B75A38 /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0942398B149D6D5000B75A38 /* PBXTargetDependency */,
-			);
-			name = iTunesMatchHelperTests;
-			productName = iTunesMatchHelperTests;
-			productReference = 09423986149D6D5000B75A38 /* iTunesMatchHelperTests.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		0942395C149D6D5000B75A38 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0440;
 			};
 			buildConfigurationList = 0942395F149D6D5000B75A38 /* Build configuration list for PBXProject "iTunesMatchHelper" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -221,7 +181,6 @@
 			projectRoot = "";
 			targets = (
 				09423964149D6D5000B75A38 /* iTunesMatchHelper */,
-				09423985149D6D5000B75A38 /* iTunesMatchHelperTests */,
 			);
 		};
 /* End PBXProject section */
@@ -237,31 +196,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		09423983149D6D5000B75A38 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				09423991149D6D5000B75A38 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		09423984149D6D5000B75A38 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		09423961149D6D5000B75A38 /* Sources */ = {
@@ -270,26 +205,14 @@
 			files = (
 				09423976149D6D5000B75A38 /* main.m in Sources */,
 				0942397D149D6D5000B75A38 /* AppDelegate.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		09423981149D6D5000B75A38 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				09423994149D6D5000B75A38 /* iTunesMatchHelperTests.m in Sources */,
+				D80D37DA15FBD6F800D320D7 /* iTunesApi.m in Sources */,
+				D80D37DE15FBF85A00D320D7 /* iTunesLibrary.m in Sources */,
+				D80D37E115FC0D9F00D320D7 /* RowData.m in Sources */,
+				D80D37E715FC591F00D320D7 /* TrackView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		0942398B149D6D5000B75A38 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 09423964149D6D5000B75A38 /* iTunesMatchHelper */;
-			targetProxy = 0942398A149D6D5000B75A38 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		09423972149D6D5000B75A38 /* InfoPlist.strings */ = {
@@ -314,14 +237,6 @@
 				0942397F149D6D5000B75A38 /* en */,
 			);
 			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-		0942398F149D6D5000B75A38 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				09423990149D6D5000B75A38 /* en */,
-			);
-			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -377,6 +292,7 @@
 		09423998149D6D5000B75A38 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iTunesMatchHelper/iTunesMatchHelper-Prefix.pch";
 				INFOPLIST_FILE = "iTunesMatchHelper/iTunesMatchHelper-Info.plist";
@@ -388,39 +304,12 @@
 		09423999149D6D5000B75A38 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iTunesMatchHelper/iTunesMatchHelper-Prefix.pch";
 				INFOPLIST_FILE = "iTunesMatchHelper/iTunesMatchHelper-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-		0942399B149D6D5000B75A38 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/iTunesMatchHelper.app/Contents/MacOS/iTunesMatchHelper";
-				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "iTunesMatchHelper/iTunesMatchHelper-Prefix.pch";
-				INFOPLIST_FILE = "iTunesMatchHelperTests/iTunesMatchHelperTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		0942399C149D6D5000B75A38 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/iTunesMatchHelper.app/Contents/MacOS/iTunesMatchHelper";
-				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "iTunesMatchHelper/iTunesMatchHelper-Prefix.pch";
-				INFOPLIST_FILE = "iTunesMatchHelperTests/iTunesMatchHelperTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -441,15 +330,6 @@
 			buildConfigurations = (
 				09423998149D6D5000B75A38 /* Debug */,
 				09423999149D6D5000B75A38 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0942399A149D6D5000B75A38 /* Build configuration list for PBXNativeTarget "iTunesMatchHelperTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0942399B149D6D5000B75A38 /* Debug */,
-				0942399C149D6D5000B75A38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

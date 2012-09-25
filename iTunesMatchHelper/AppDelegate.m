@@ -7,284 +7,408 @@
 //
 
 #import "AppDelegate.h"
+#import "TrackView.h"
+
+#import "iTunesApi.h"
+#import "iTunesLibrary.h"
+#import "RowData.h"
+
+@interface AppDelegate ()
+
+@property (nonatomic, strong) NSMutableArray *songData;
+
+@property (nonatomic) BOOL updatingLibrary;
+@property (nonatomic) BOOL canCancel;
+@property (nonatomic) BOOL doCancel;
+
+@end
+
 
 @implementation AppDelegate
 
-@synthesize window = _window;
-@synthesize progressBar = _progressBar;
-@synthesize progressLabel = _progressLabel;
-@synthesize songTable = _songTable;
-@synthesize scanButton = _scanButton;
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
-    updatingLibrary = NO;
-    canCancel = NO;
-    doCancel = NO;
+    self.updatingLibrary = NO;
+    self.canCancel = NO;
+    self.doCancel = NO;
+    
+    self.trackView.tableView = self.trackTableView;    
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
-{
-    return [songData count];
+#pragma mark - NSTableViewDelegate
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView {
+    return [self.songData count];
 }
 
-- (void)tableView:(NSTableView *)aTableView setObjectValue:(id)value forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {          
-    if ([[aTableColumn identifier] isEqualToString:@"checkCol"]) {
-        NSArray *songInfo = [songData objectAtIndex:rowIndex];
-        
-        NSDictionary *newInfo = [songInfo objectAtIndex:0];
-        iTunesFileTrack *oldInfo = [songInfo objectAtIndex:1];
-        
-        NSArray *newSongInfo = [NSArray arrayWithObjects:newInfo,oldInfo,[NSNumber numberWithBool:[value boolValue]], nil];
-        
-        [songData replaceObjectAtIndex:rowIndex withObject:newSongInfo];
+- (void)tableView:(NSTableView *)aTableView setObjectValue:(id)value forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
+    if (![[aTableColumn identifier] isEqualToString:@"checkCol"]) {
+        return;
     }
+    
+    RowData *songInfo = self.songData[rowIndex];
+    songInfo.isChecked = [value boolValue];
 }
 
 
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
-{
-    //NSLog(@"Updating data for column: %@ / row: %ldi",[aTableColumn identifier],rowIndex);
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
+    RowData *songInfo = self.songData[rowIndex];
     
-    NSArray *songInfo = [songData objectAtIndex:rowIndex];
+    NSString *colId = [aTableColumn identifier];
     
-    NSDictionary *newInfo = [songInfo objectAtIndex:0];
-    iTunesFileTrack *oldInfo = [songInfo objectAtIndex:1];
-    BOOL selected = [[songInfo objectAtIndex:2] boolValue];
-    
-    if ([[aTableColumn identifier] isEqualToString:@"origName"]) {
-        return [oldInfo name];
-    } else if ([[aTableColumn identifier] isEqualToString:@"origArtist"]) {
-        return [oldInfo artist];
-    } else if ([[aTableColumn identifier] isEqualToString:@"newName"]) {
-        if ([[newInfo valueForKey:@"resultCount"] intValue] == 0) {
+    if ([colId isEqualToString:@"iTunesId"]) {
+        return [NSString stringWithFormat:@"%li", songInfo.trackId];
+    } else if ([colId isEqualToString:@"origName"]) {
+        return [songInfo.fileTrack name];
+    } else if ([colId isEqualToString:@"origArtist"]) {
+        return [songInfo.fileTrack artist];
+    } else if ([colId isEqualToString:@"newName"]) {
+        if (songInfo.officialInfo == nil) {
             return  @"";
         } else {
-            return [[[newInfo valueForKey:@"results"] objectAtIndex:0] valueForKey:@"trackName"];
+            return [songInfo.officialInfo valueForKey:@"trackName"];
         }
-    } else if ([[aTableColumn identifier] isEqualToString:@"newArtist"]) {
-        if ([[newInfo valueForKey:@"resultCount"] intValue] == 0) {
+    } else if ([colId isEqualToString:@"newArtist"]) {
+        if (songInfo.officialInfo == nil) {
             return  @"";
         } else {
-            return [[[newInfo valueForKey:@"results"] objectAtIndex:0] valueForKey:@"artistName"];
+            return [songInfo.officialInfo valueForKey:@"artistName"];
         }
-    } else if ([[aTableColumn identifier] isEqualToString:@"origAlbum"]) {
-        return [oldInfo album];
-    } else if ([[aTableColumn identifier] isEqualToString:@"newAlbum"]) {
-        if ([[newInfo valueForKey:@"resultCount"] intValue] == 0) {
+    } else if ([colId isEqualToString:@"origAlbum"]) {
+        return [songInfo.fileTrack album];
+    } else if ([colId isEqualToString:@"newAlbum"]) {
+        if (songInfo.officialInfo == nil) {
             return  @"";
         } else {
-            return [[[newInfo valueForKey:@"results"] objectAtIndex:0] valueForKey:@"collectionName"];
+            return [songInfo.officialInfo valueForKey:@"collectionName"];
         }
-    } else if ([[aTableColumn identifier] isEqualToString:@"checkCol"]) {
-        if ([[newInfo valueForKey:@"resultCount"] intValue] == 0) {
-            return  @"";
+    } else if ([colId isEqualToString:@"checkCol"]) {
+        if (songInfo.officialInfo == nil) {
+            return  @(NSOffState);
         } else {
-            return [NSNumber numberWithInteger:(selected ? NSOnState : NSOffState)];
+            return @(songInfo.isChecked ? NSOnState : NSOffState);
         }  
-    } else
-        return @"";
-}
-
-- (void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
-{
-    
-    NSArray *songInfo = [songData objectAtIndex:rowIndex];
-    
-    NSDictionary *newInfo = [songInfo objectAtIndex:0];
-    iTunesFileTrack *oldInfo = [songInfo objectAtIndex:1];
-    
-    if ([[newInfo valueForKey:@"resultCount"] intValue] < 1) {
-        [cell setEnabled:NO];
-    } else {
-        [cell setEnabled:YES];
+    } else if ([colId isEqualToString:@"countryCode"]) {
+        if (songInfo.officialInfo == nil) {
+            return  @"";
+        } else {
+            return [songInfo.officialInfo valueForKey:@"countryCode"];
+        }
     }
     
-    if ([[newInfo valueForKey:@"resultCount"] intValue] > 0) {
-        NSString *newArtist = [[[newInfo valueForKey:@"results"] objectAtIndex:0] valueForKey:@"artistName"];
-        NSString *newAlbum = [[[newInfo valueForKey:@"results"] objectAtIndex:0] valueForKey:@"collectionName"];;
-        NSString *newName = [[[newInfo valueForKey:@"results"] objectAtIndex:0] valueForKey:@"trackName"];
+    return @"";
+}
+
+- (void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
+    
+    RowData *songInfo = self.songData[rowIndex];
+    
+    NSDictionary *newInfo = songInfo.officialInfo;
+    iTunesFileTrack *oldInfo = songInfo.fileTrack;
+    
+    [cell setEnabled:YES];
+    
+    if (newInfo == nil) {
+        if ([[aTableColumn identifier] isEqualToString:@"checkCol"]) {
+            [cell setEnabled:NO];
+        }
+        else {
+            [cell setTextColor:[NSColor grayColor]];            
+        }
+    }
+    else if (songInfo.isDifferent) {
+        if ([[aTableColumn identifier] isEqualToString:@"checkCol"]) {
+            return;
+        }
         
-        if ([[aTableColumn identifier] isEqualToString:@"newName"]) {
+        NSString *newArtist = newInfo[@"artistName"];
+        NSString *newAlbum = newInfo[@"collectionName"];;
+        NSString *newName = newInfo[@"trackName"];
+        
+        BOOL isDifferent = NO;
+        
+        if ([[aTableColumn identifier] isEqualToString:@"origName"]) {
             if (![[oldInfo name] isEqualToString:newName]) {
-                [cell setTextColor:[NSColor redColor]];
-            } else {
-                [cell setTextColor:[NSColor textColor]];
+                isDifferent = YES;
             }
-        } else if ([[aTableColumn identifier] isEqualToString:@"newArtist"]) {
+        } else if ([[aTableColumn identifier] isEqualToString:@"origArtist"]) {
             if (![[oldInfo artist] isEqualToString:newArtist]) {
-                [cell setTextColor:[NSColor redColor]];
-            } else {
-                [cell setTextColor:[NSColor textColor]];
+                isDifferent = YES;
             }
-        } else if ([[aTableColumn identifier] isEqualToString:@"newAlbum"]) {
+        } else if ([[aTableColumn identifier] isEqualToString:@"origAlbum"]) {
             if (![[oldInfo album] isEqualToString:newAlbum]) {
-                [cell setTextColor:[NSColor redColor]];
-            } else {
-                [cell setTextColor:[NSColor textColor]];
+                isDifferent = YES;
             }
         }
-    } else {
-        if (![[aTableColumn identifier] isEqualToString:@"checkCol"])
+        
+        if (isDifferent) {
+            [cell setTextColor:[NSColor redColor]];
+        }
+        else {
             [cell setTextColor:[NSColor textColor]];
+        }
+    
+    } else {
+        if ([[aTableColumn identifier] isEqualToString:@"checkCol"]) {
+            [cell setEnabled:NO];
+        }
+        else {
+            [cell setTextColor:[NSColor blueColor]];
+        }
+        
+    }
+}
+
+- (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(NSInteger)row {
+    [self displayRowData:self.songData[row]];
+    
+    return YES;
+}
+
+#pragma mark -
+
+- (void)displayRowData:(RowData *)rowData {
+    
+    self.trackView.rowData = rowData;
+    
+    if (rowData == nil) {
+        [self.trackView setHidden:YES];
+        return;
+    }
+    
+    [self.trackView setHidden:NO];
+    
+    NSString *trackId = [[NSNumber numberWithInteger:rowData.trackId] stringValue];
+    [self.trackIdLabel setStringValue:trackId];
+    
+    if (rowData.officialInfo == nil) {
+        [self.countryCodeLabel setStringValue:@""];
+    }
+    else {
+        NSString *countryCode = rowData.officialInfo[@"countryCode"];
+        [self.countryCodeLabel setStringValue:countryCode];
     }
     
 }
 
-+ (NSMutableDictionary *)decodeJsonData:(NSData *)jsonData {
+// Takes an array, splits it into chunks of the given size, runs each chunk through
+// the block and then combines the results
+- (NSArray *)chunkArray:(NSArray *)array size:(NSInteger)size callback:(NSArray *(^)(NSArray *chunk))block {
     
-    if (jsonData == nil) {
-        NSLog(@"[%@ %@] JSON error: %@",
-              NSStringFromClass([self class]),
-              NSStringFromSelector(_cmd),
-              @"Json data was nil");
-        return nil;
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:[array count]];
+    
+    NSRange range;
+    for (int i = 0; i < [array count]; i+=size) {
+        range.location = i;
+        range.length = MIN(size, [array count] - i);
+        
+        NSArray *items = block([array subarrayWithRange:range]);        
+        [result addObjectsFromArray:items];
+    }
+    return result;
+}
+
+- (NSArray *)matchTrackIds:(NSArray *)trackIds {
+    
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        self.progressBar.doubleValue = 0;
+    });
+    
+    NSMutableArray *mTrackIds = [trackIds mutableCopy];
+    
+    NSArray *countryCodes = @[@"US", @"GB", @"DE", @"SE", @"AU", @"CA", @"FR", @"AR", @"DK", @"NL"];
+    
+    const int batchSize = 100;
+    
+    NSMutableDictionary *matches = [NSMutableDictionary dictionaryWithCapacity:[mTrackIds count]];
+    
+    for (NSString *countryCode in countryCodes) {
+        
+        NSArray *result = [self chunkArray:mTrackIds size:batchSize callback:^(NSArray *chunk){
+            NSArray *tracks = [iTunesApi lookupTracks:chunk forCountry:countryCode];
+            
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                self.progressBar.doubleValue += [tracks count];
+            });
+            
+            return tracks;
+        }];
+        
+        for (NSMutableDictionary *track in result) {
+            NSNumber *trackId = track[@"trackId"];
+            matches[trackId] = track;
+            [mTrackIds removeObject:trackId];
+            
+            track[@"countryCode"] = countryCode;
+        }
     }
     
-    NSError *error = nil;
-    NSMutableDictionary *results = [NSJSONSerialization JSONObjectWithData:jsonData
-                                                                   options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
-                                                                     error:&error];
-    if (error) {
-        NSLog(@"[%@ %@] JSON error: %@",
-              NSStringFromClass([self class]),
-              NSStringFromSelector(_cmd),
-              error.localizedDescription);
-        return nil;
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:[trackIds count]];
+    
+    for (NSNumber *trackId in trackIds) {
+        NSDictionary *track = matches[trackId];
+        if (track == nil) {
+            [result addObject:@{}];
+        }
+        else {
+            [result addObject:track];
+        }
     }
     
-    return results;
+    // create a set containing all the album ids for tracks that were matched
+    NSMutableSet *albumIds = [NSMutableSet new];
+    for (NSDictionary *item in result) {
+        if ([item count] == 0) {
+            continue;
+        }
+        [albumIds addObject:item[@"collectionId"]];
+    }
+    NSLog(@"%li albums", [albumIds count]);
+    
+    NSMutableArray *albums = [NSMutableArray arrayWithCapacity:[albumIds count]];
+    
+    for (NSString *countryCode in countryCodes) {        
+        NSArray *countryAlbums = [self chunkArray:[albumIds allObjects] size:batchSize callback:^(NSArray *chunk){
+            return [iTunesApi lookupCollections:chunk forCountry:countryCode];
+        }];
+        [albums addObjectsFromArray:countryAlbums];
+    }
+    
+    NSMutableDictionary *albumMap = [NSMutableDictionary dictionaryWithCapacity:[albums count]];
+    
+    // create a dictionary of all the albums
+    for (NSDictionary *album in albums) {
+        albumMap[album[@"collectionId"]] = album;
+    }
+    
+    for (NSMutableDictionary *item in result) {
+        if ([item count] == 0) {
+            continue;
+        }
+        
+        NSNumber *collectionId = item[@"collectionId"];
+        NSLog(@"%@", collectionId);
+        NSDictionary *collection = albumMap[collectionId];
+        if (collection != nil) {
+            item[@"albumArtistName"] = collection[@"artistName"];
+        }
+    }
+    
+    return result;
 }
 
 - (IBAction)fetchLibrary:(id)sender {
-    doCancel = NO;
+    self.doCancel = NO;
     
-    if (canCancel) {
-        doCancel = YES;
-        if (updatingLibrary) {
+    if (self.canCancel) {
+        self.doCancel = YES;
+        if (self.updatingLibrary) {
             [self.scanButton setTitle:@"Update Library"];
             [self.progressLabel setStringValue:@"Updating canceled. Click 'Update Library' to update checked songs."];
         } else {
             [self.scanButton setTitle:@"Scan Library"];
             [self.progressLabel setStringValue:@"Scanning canceled. Click 'Scan Library' to begin."];
         }
-        canCancel = NO;
+        self.canCancel = NO;
     }
     
-    if (!updatingLibrary) {
+    if (!self.updatingLibrary) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
-            if (doCancel)
+            if (self.doCancel)
                 return;
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 [self.scanButton setTitle:@"Cancel"];
-                canCancel = YES;
+                self.canCancel = YES;
             });
-            iTunesApplication *iTunes = [SBApplication applicationWithBundleIdentifier:@"com.apple.iTunes"];
             
-            songData = [NSMutableArray arrayWithCapacity:5];
+            self.songData = [NSMutableArray arrayWithCapacity:5];
             
-            SBElementArray *sources = [iTunes sources];
-            iTunesSource *libsource;
-            
-            for (iTunesSource *source in sources) {
-                if ([source kind] == 'kLib') {
-                    NSLog(@"Found library");
-                    libsource = source;
-                    break;
-                }
-            }
-            
-            SBElementArray *libPlaylists = [libsource libraryPlaylists];
-            
-            iTunesLibraryPlaylist *theLibraryPlaylist = [libPlaylists objectAtIndex:0];
-            
-            //SBJsonParser *paser = [[SBJsonParser alloc] init];
+            iTunesLibraryPlaylist *theLibraryPlaylist = [iTunesLibrary primaryPlaylist];
             
             NSArray *fileList = [[theLibraryPlaylist fileTracks] get];
             
-            NSMutableArray *searchList = [[NSMutableArray alloc] initWithCapacity:1];
             self.progressBar.minValue = 1;
             self.progressBar.maxValue = [fileList count];
             
             for (int x=0;x < [fileList count];x++) {
-                if (doCancel)
+                if (self.doCancel)
                     return;
-                iTunesFileTrack *track = [fileList objectAtIndex:x];
+                iTunesFileTrack *track = fileList[x];
                 //NSLog(@"Loading track %i of %lu",x,[fileList count]);
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
                     NSUInteger fileListCount = [fileList count];
                     int z = x+1;
-                    if (doCancel)
+                    if (self.doCancel)
                         [self.progressLabel setStringValue:@"Scanning canceled. Click 'Scan Library' to begin."];
                     else
                         [self.progressLabel setStringValue:[NSString stringWithFormat:@"Scanning iTunes library song %i of %li...",z,fileListCount]];
                     [self.progressBar setDoubleValue:z];
                 });
                 
-                if (([[track kind] isEqualToString:@"Matched AAC audio file"])) {
-                    //NSLog(@"Track location: %@",[track location]);
-                    NSData *file = [NSData dataWithContentsOfURL:[track location]];
-                    if (file != nil) {
-                        //NSLog(@"Finding song in track %i",x);
-                        NSRange range = [file rangeOfData:[@"song" dataUsingEncoding:NSUTF8StringEncoding] options:0 range:NSMakeRange(0, 700)];
-                        //NSLog(@"Range of song is: (%lu,%lu)",range.location,range.length);
-                        if (range.location != NSNotFound) {
-                            NSData *iTunesIDData = [file subdataWithRange:NSMakeRange(range.location+4, 4)];
-                            //NSLog(@"ID Hex: %@",iTunesIDData);
-                            
-                            int iTunesIDInt = CFSwapInt32BigToHost(*(int*)([iTunesIDData bytes]));
-                            NSNumber *iTunesID = [NSNumber numberWithInt:iTunesIDInt];
-                            NSNumber *trackID = [NSNumber numberWithInteger:[track id]];
-                            NSArray *iTunesTrack = [NSArray arrayWithObjects:iTunesID,track,trackID, nil];
-                            
-                            [searchList addObject:iTunesTrack];
-                            
-                            //NSLog(@"iTunes persistant ID: %ld",[track id]);
-                        } else {
-                            NSLog(@"SONG ID NOT FOUND!!!");
-                        }
-                    } else {
-                        NSLog(@"Could not load file.");
-                    }
+                NSNumber *trackId = [iTunesLibrary fileTrackId:track];
+                if (trackId != nil) {
+                    RowData *rowData = [[RowData alloc] init];
+                    rowData.isChecked = NO;
+                    rowData.trackId = [trackId unsignedIntValue];
+                    rowData.fileTrack = track;
+                    
+                    [self.songData addObject:rowData];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^(void) {
+                        [self.songTable reloadData];
+                    });
                 }
             }
             
-            NSLog(@"Found %lu matched songs.",[searchList count]);
+            NSLog(@"Found %lu matched songs.",[self.songData count]);
             
-            self.progressBar.maxValue = [searchList count];
-            for (int y=0; y < [searchList count]; y++) {
-                if (doCancel)
-                    return;
-                NSNumber *iTunesID = [[searchList objectAtIndex:y] objectAtIndex:0];
-                iTunesFileTrack *track = [[searchList objectAtIndex:y] objectAtIndex:1];
+            self.progressBar.maxValue = [self.songData count];
+            
+           
+            NSMutableArray *trackIds = [NSMutableArray arrayWithCapacity:[self.songData count]];
+            for (RowData *item in self.songData) {
+                NSNumber *trackId = @(item.trackId);
+                [trackIds addObject:trackId];
+            }
+            
+            NSArray *tracks = [self matchTrackIds:trackIds];
+            
+            NSLog(@"Fetched data for  %lu/%lu matched songs.", [tracks count],[self.songData count]);
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                [self.progressBar setDoubleValue:[self.songData count]];
+            });            
+            
+            for (int y=0; y < [self.songData count]; y++) {
+                RowData *rowData = self.songData[y];
+                iTunesFileTrack *track = rowData.fileTrack;
                 
-                //NSLog(@"Getting info for song %i of %lu (ID: %i / Name: %@)",y,[searchList count],[iTunesID intValue],[track name]);
-                dispatch_async(dispatch_get_main_queue(), ^(void) {
-                    [self.progressLabel setStringValue:[NSString stringWithFormat:@"Fetching metadata for song %i of %li...",y+1,[searchList count]]];
-                    [self.progressBar setDoubleValue:y+1];
-                });
-                
-                
-                NSString *urlString = [NSString stringWithFormat:@"http://itunes.apple.com/lookup?id=%i",[iTunesID intValue]];
-                
-                //NSLog(@"URL String: %@",urlString);
-                
-                NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
-                
-                NSData *response = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-                
-                NSDictionary *songNewData = [AppDelegate decodeJsonData:response];
-                
-                
-                if ([[songNewData valueForKey:@"resultCount"] intValue] > 0) {
-                    NSArray *songInfo = [NSArray arrayWithObjects:songNewData,[[searchList objectAtIndex:y] objectAtIndex:1],[NSNumber numberWithBool:YES],[[searchList objectAtIndex:y] objectAtIndex:2], nil];
-                    [songData addObject:songInfo];
-                } else {
-                    NSLog(@"No metadata available for song %@ (ID: %i)",[track name],[iTunesID intValue]);
-                    NSArray *songInfo = [NSArray arrayWithObjects:songNewData,[[searchList objectAtIndex:y] objectAtIndex:1],[NSNumber numberWithBool:NO],[[searchList objectAtIndex:y] objectAtIndex:2], nil];
-                    [songData addObject:songInfo];
+                NSDictionary *songNewData = tracks[y];
+                if ([songNewData count] == 0) {
+                    songNewData = nil;
                 }
+                
+                BOOL isChecked = NO;
+                if (songNewData == nil) {
+                    NSLog(@"No metadata available for song %@ (ID: %li)",[track name], rowData.trackId);
+                }
+                else {
+                    NSMutableDictionary *blah = [songNewData mutableCopy];
+                    
+                    NSLog(@"Metadata for song %@ found in the %@ store",[track name], songNewData[@"country"]);
+                    
+                    NSDate *releaseDate = songNewData[@"releaseDate"];
+                    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:releaseDate];
+                    blah[@"year"] = @(components.year);
+                    songNewData = blah;
+                    
+                    if ([self isTrackInfoDifferent:track newInfo:songNewData]) {
+                        isChecked = YES;
+                    }
+                }
+                
+                rowData.officialInfo = songNewData;
+                rowData.fileTrack = track;
+                rowData.isDifferent = [self isTrackInfoDifferent:track newInfo:songNewData];
                 
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
                     [self.songTable reloadData];
@@ -292,101 +416,125 @@
             }
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 [self.scanButton setTitle:@"Update Library"];
-                updatingLibrary = YES;
-                canCancel = NO;
+                self.updatingLibrary = YES;
+                self.canCancel = NO;
                 [self.progressLabel setStringValue:@"Finished fetching metadata. Click 'Update Library to update checked songs."];
             });
         });
-    } else if (updatingLibrary) {
+    } else if (self.updatingLibrary) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
-            if (doCancel)
+            if (self.doCancel)
                 return;
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 [self.scanButton setTitle:@"Cancel"];
-                canCancel = YES;
+                self.canCancel = YES;
             });
-            iTunesApplication *iTunes = [SBApplication applicationWithBundleIdentifier:@"com.apple.iTunes"];
             
-            SBElementArray *sources = [iTunes sources];
-            iTunesSource *libsource;
-            
-            for (iTunesSource *source in sources) {
-                if ([source kind] == 'kLib') {
-                    NSLog(@"Found library");
-                    libsource = source;
-                    break;
-                }
-            }
-            
-            SBElementArray *libPlaylists = [[libsource libraryPlaylists] copy];
-            
-            iTunesLibraryPlaylist *theLibraryPlaylist = [libPlaylists objectAtIndex:0];
-            
-            //SBJsonParser *paser = [[SBJsonParser alloc] init];
-            
-            SBElementArray *fileList = [theLibraryPlaylist fileTracks];
-            self.progressBar.maxValue = [songData count];
-            for (int z=0;z < [songData count];z++) {
-                if (doCancel)
+            self.progressBar.maxValue = [self.songData count];
+            for (int z=0;z < [self.songData count];z++) {
+                if (self.doCancel)
                     return;
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
-                    [self.progressLabel setStringValue:[NSString stringWithFormat:@"Updating metadata for song %i of %li...",z+1,[songData count]]];
+                    [self.progressLabel setStringValue:[NSString stringWithFormat:@"Updating metadata for song %i of %li...",z+1,[self.songData count]]];
                     [self.progressBar setDoubleValue:z+1];
                 });
-                NSArray *songInfo = [songData objectAtIndex:z];
-                if ([[songInfo objectAtIndex:2] boolValue]) {
-                    NSDictionary *newInfo = [songInfo objectAtIndex:0];
-                    iTunesFileTrack *track = [fileList objectWithID:[songInfo objectAtIndex:3]];
-                    NSDictionary *trackInfo = [[newInfo valueForKey:@"results"] objectAtIndex:0];
-                    
-                    //NSLog(@"Track info: %@",[[newInfo valueForKey:@"results"] objectAtIndex:0]);
-                    NSLog(@"Replacing title: %@ with title: %@",[track name],[trackInfo valueForKey:@"trackName"]);
-                    
-                    //NSLog(@"Track count: %i",[[trackInfo valueForKey:@"trackCount"] intValue]);
-                    
-                    track.name = [trackInfo valueForKey:@"trackName"];
-                    track.album = [trackInfo valueForKey:@"collectionName"];
-                    track.artist = [trackInfo valueForKey:@"artistName"];
-                    [track setTrackCount:[[trackInfo valueForKey:@"trackCount"] intValue]];
-                    [track setTrackNumber:[[trackInfo valueForKey:@"trackNumber"] intValue]];
-                    track.genre = [trackInfo valueForKey:@"primaryGenreName"];
-                    [track setDiscCount:[[trackInfo valueForKey:@"discCount"] intValue]];
-                    [track setDiscNumber:[[trackInfo valueForKey:@"discNumber"] intValue]];
+                
+                RowData *songInfo = self.songData[z];
+                if (songInfo.isChecked) {
+                    NSDictionary *newInfo = songInfo.officialInfo;
+                    iTunesFileTrack *track = songInfo.fileTrack;
+                    [self replaceTrackInfo:track newInfo:newInfo];                    
                 }
             }
             
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 [self.scanButton setTitle:@"Scan Library"];
-                updatingLibrary = NO;
-                canCancel = NO;
+                self.updatingLibrary = NO;
+                self.canCancel = NO;
                 [self.progressLabel setStringValue:@"Finished updating song metadata."];
             });
         });
     }
 }
 
+- (void)replaceTrackInfo:(iTunesFileTrack *)track newInfo:(NSDictionary *)trackInfo {
+    NSLog(@"Replacing title: %@ with title: %@",track.name,[trackInfo valueForKey:@"trackName"]);
+    
+    track.name = trackInfo[@"trackName"];
+    track.album = trackInfo[@"collectionName"];
+    track.artist = trackInfo[@"artistName"];
+    track.albumArtist = trackInfo[@"albumArtistName"];
+    
+    track.genre = trackInfo[@"primaryGenreName"];
+    
+    [track setTrackNumber:[trackInfo[@"trackNumber"] intValue]];
+    [track setTrackCount:[trackInfo[@"trackCount"] intValue]];
+    
+    [track setDiscNumber:[trackInfo[@"discNumber"] intValue]];
+    [track setDiscCount:[trackInfo[@"discCount"] intValue]];
+    
+    track.year = [trackInfo[@"year"] intValue];
+    track.comment = @"";
+}
+
+- (BOOL)isTrackInfoDifferent:(iTunesFileTrack *)track newInfo:(NSDictionary *)trackInfo {
+    if (![track.name isEqualTo:trackInfo[@"trackName"]]) {
+        return YES;
+    }
+    
+    if (![track.albumArtist isEqualToString:trackInfo[@"albumArtistName"]]) {
+        return YES;
+    }
+        
+    if (![track.album isEqualTo:trackInfo[@"collectionName"]]) {
+        return YES;
+    }
+    
+    if (![track.artist isEqualTo:trackInfo[@"artistName"]]) {
+        return YES;
+    }
+    
+    if (track.trackCount != [trackInfo[@"trackCount"] intValue]) {
+        return YES;
+    }
+    
+    if (track.trackNumber != [trackInfo[@"trackNumber"] intValue]) {
+        return YES;
+    }
+    
+    if (track.discCount != [trackInfo[@"discCount"] intValue]) {
+        return YES;
+    }
+    
+    if (track.discNumber != [trackInfo[@"discNumber"] intValue]) {
+        return YES;
+    }
+    
+    if (![track.genre isEqualToString:trackInfo[@"primaryGenreName"]]) {
+        return YES;
+    }
+    
+    if (track.year != [trackInfo[@"year"] intValue]) {
+        return YES;
+    };
+    
+    if (![track.comment isEqualToString:@""]) {
+        return YES;
+    }
+    
+    return NO;
+}
+
 - (IBAction)checkAllItems:(id)sender {
-    for (int i=0;i < [songData count];i++) {
-        NSArray *songInfo = [songData objectAtIndex:i];
-        NSDictionary *newInfo = [songInfo objectAtIndex:0];
-        iTunesFileTrack *oldInfo = [songInfo objectAtIndex:1];
-        
-        NSArray *newSongInfo = [NSArray arrayWithObjects:newInfo,oldInfo,[NSNumber numberWithBool:YES], nil];
-        
-        [songData replaceObjectAtIndex:i withObject:newSongInfo];
+    for (RowData *rowData in self.songData) {
+        rowData.isChecked = YES;
     }
     [self.songTable reloadData];
 }
 
 - (IBAction)uncheckAllItems:(id)sender {
-    for (int i=0;i < [songData count];i++) {
-        NSArray *songInfo = [songData objectAtIndex:i];
-        NSDictionary *newInfo = [songInfo objectAtIndex:0];
-        iTunesFileTrack *oldInfo = [songInfo objectAtIndex:1];
-        
-        NSArray *newSongInfo = [NSArray arrayWithObjects:newInfo,oldInfo,[NSNumber numberWithBool:NO], nil];
-        
-        [songData replaceObjectAtIndex:i withObject:newSongInfo];
+    for (RowData *rowData in self.songData) {
+        rowData.isChecked = NO;
     }
     [self.songTable reloadData];
 }

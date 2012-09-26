@@ -172,7 +172,7 @@
         }
         
         if (rowIndex == 0) {
-            return self.rowData.officialInfo[@"trackName"];
+            return self.rowData.officialInfo[@"trackCensoredName"];
         }
         else if (rowIndex == 1) {
             return self.rowData.officialInfo[@"artistName"];

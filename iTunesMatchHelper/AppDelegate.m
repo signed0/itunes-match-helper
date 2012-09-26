@@ -62,26 +62,8 @@
         return [songInfo.fileTrack name];
     } else if ([colId isEqualToString:@"origArtist"]) {
         return [songInfo.fileTrack artist];
-    } else if ([colId isEqualToString:@"newName"]) {
-        if (songInfo.officialInfo == nil) {
-            return  @"";
-        } else {
-            return [songInfo.officialInfo valueForKey:@"trackName"];
-        }
-    } else if ([colId isEqualToString:@"newArtist"]) {
-        if (songInfo.officialInfo == nil) {
-            return  @"";
-        } else {
-            return [songInfo.officialInfo valueForKey:@"artistName"];
-        }
     } else if ([colId isEqualToString:@"origAlbum"]) {
         return [songInfo.fileTrack album];
-    } else if ([colId isEqualToString:@"newAlbum"]) {
-        if (songInfo.officialInfo == nil) {
-            return  @"";
-        } else {
-            return [songInfo.officialInfo valueForKey:@"collectionName"];
-        }
     } else if ([colId isEqualToString:@"checkCol"]) {
         if (songInfo.officialInfo == nil) {
             return  @(NSOffState);
@@ -92,7 +74,7 @@
         if (songInfo.officialInfo == nil) {
             return  @"";
         } else {
-            return [songInfo.officialInfo valueForKey:@"countryCode"];
+            return songInfo.officialInfo[@"countryCode"];
         }
     }
     
@@ -123,7 +105,7 @@
         
         NSString *newArtist = newInfo[@"artistName"];
         NSString *newAlbum = newInfo[@"collectionName"];;
-        NSString *newName = newInfo[@"trackName"];
+        NSString *newName = newInfo[@"trackCensoredName"];
         
         BOOL isDifferent = NO;
         
@@ -178,7 +160,7 @@
     
     [self.trackView setHidden:NO];
     
-    NSString *trackId = [[NSNumber numberWithInteger:rowData.trackId] stringValue];
+    NSString *trackId = [[NSNumber numberWithUnsignedInteger:rowData.trackId] stringValue];
     [self.trackIdLabel setStringValue:trackId];
     
     if (rowData.officialInfo == nil) {
@@ -458,7 +440,7 @@
 }
 
 - (void)replaceTrackInfo:(iTunesFileTrack *)track newInfo:(NSDictionary *)trackInfo {
-    NSLog(@"Replacing title: %@ with title: %@",track.name,[trackInfo valueForKey:@"trackCensoredName"]);
+    NSLog(@"Replacing title: %@ with title: %@", track.name, trackInfo[@"trackCensoredName"]);
     
     track.name = trackInfo[@"trackCensoredName"];
     track.album = trackInfo[@"collectionName"];
@@ -474,7 +456,6 @@
     [track setDiscCount:[trackInfo[@"discCount"] intValue]];
     
     track.year = [trackInfo[@"year"] intValue];
-    track.comment = @"";
 }
 
 - (BOOL)isTrackInfoDifferent:(iTunesFileTrack *)track newInfo:(NSDictionary *)trackInfo {
@@ -517,10 +498,6 @@
     if (track.year != [trackInfo[@"year"] intValue]) {
         return YES;
     };
-    
-    if (![track.comment isEqualToString:@""]) {
-        return YES;
-    }
     
     return NO;
 }

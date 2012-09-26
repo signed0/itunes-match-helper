@@ -1,4 +1,4 @@
-itunes-match-helper
+iTunes Match Helper
 ===================
 
 Fixes missing metadata for songs that iTunes has matched

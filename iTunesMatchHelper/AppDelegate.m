@@ -321,11 +321,11 @@
                 self.canCancel = YES;
             });
             
-            self.songData = [NSMutableArray arrayWithCapacity:5];
-            
             iTunesLibraryPlaylist *theLibraryPlaylist = [iTunesLibrary primaryPlaylist];
             
             NSArray *fileList = [[theLibraryPlaylist fileTracks] get];
+
+            self.songData = [NSMutableArray arrayWithCapacity:[fileList count]];
             
             self.progressBar.minValue = 1;
             self.progressBar.maxValue = [fileList count];

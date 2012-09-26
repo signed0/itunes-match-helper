@@ -67,7 +67,7 @@
     
     if (rowIndex == 0) {
         oldValue = self.rowData.fileTrack.name;
-        newValue = self.rowData.officialInfo[@"trackName"];
+        newValue = self.rowData.officialInfo[@"trackCensoredName"];
     }
     else if (rowIndex == 1) {
         oldValue = self.rowData.fileTrack.artist;

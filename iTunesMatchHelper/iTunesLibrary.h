@@ -15,6 +15,6 @@
 
 + (iTunesLibraryPlaylist *)primaryPlaylist;
 
-+ (NSNumber *)fileTrackId:(iTunesFileTrack *)track;
++ (NSUInteger)fileTrackId:(iTunesFileTrack *)track;
 
 @end

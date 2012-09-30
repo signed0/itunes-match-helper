@@ -12,6 +12,7 @@
 #import "iTunesApi.h"
 #import "iTunesLibrary.h"
 #import "RowData.h"
+#import "LocalCache.h"
 
 @interface AppDelegate ()
 
@@ -222,6 +223,10 @@
             [mTrackIds removeObject:trackId];
             
             track[@"countryCode"] = countryCode;
+            
+            NSDate *releaseDate = track[@"releaseDate"];
+            NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:releaseDate];
+            track[@"year"] = @(components.year);
         }
     }
     
@@ -282,6 +287,8 @@
 - (IBAction)fetchLibrary:(id)sender {
     self.doCancel = NO;
     
+    LocalCache *cache = [[LocalCache alloc] initWithPath:@"cache.sqlite"];
+    
     if (self.canCancel) {
         self.doCancel = YES;
         if (self.updatingLibrary) {
@@ -327,11 +334,21 @@
                     [self.progressBar setDoubleValue:z];
                 });
                 
-                NSNumber *trackId = [iTunesLibrary fileTrackId:track];
-                if (trackId != nil) {
+                NSUInteger trackId = [cache trackIdForDatabaseId:[track databaseID]];
+                
+                if (trackId == 0) {
+                    // not in cache, read file
+                    trackId = [iTunesLibrary fileTrackId:track];
+                    
+                    if (trackId > 0) {
+                        [cache addTrackId:trackId toDatabaseId:[track databaseID]];
+                    }
+                }
+                
+                if (trackId > 0) {
                     RowData *rowData = [[RowData alloc] init];
                     rowData.isChecked = NO;
-                    rowData.trackId = [trackId unsignedIntValue];
+                    rowData.trackId = trackId;
                     rowData.fileTrack = track;
                     
                     [self.songData addObject:rowData];
@@ -340,57 +357,60 @@
                         [self.songTable reloadData];
                     });
                 }
+                
+                
             }
             
             NSLog(@"Found %lu matched songs.",[self.songData count]);
             
             self.progressBar.maxValue = [self.songData count];
             
-           
             NSMutableArray *trackIds = [NSMutableArray arrayWithCapacity:[self.songData count]];
             for (RowData *item in self.songData) {
-                NSNumber *trackId = @(item.trackId);
-                [trackIds addObject:trackId];
+                NSDictionary *trackInfo = [cache trackInfo:item.trackId];
+                if (trackInfo == nil) {
+                    [trackIds addObject:@(item.trackId)];
+                }
+                else {
+                    item.officialInfo = trackInfo;
+                }
             }
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                [self.songTable reloadData];
+            });
+            
+            NSMutableDictionary *matchedTracks = [NSMutableDictionary dictionary];
             
             NSArray *tracks = [self matchTrackIds:trackIds];
+            for (NSDictionary *matchedTrack in tracks) {
+                if (matchedTrack != nil && [matchedTrack count] > 0) {
+                    matchedTracks[matchedTrack[@"trackId"]] = matchedTrack;
+                }
+            }
             
             NSLog(@"Fetched data for  %lu/%lu matched songs.", [tracks count],[self.songData count]);
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 [self.progressBar setDoubleValue:[self.songData count]];
             });            
             
-            for (int y=0; y < [self.songData count]; y++) {
-                RowData *rowData = self.songData[y];
+            for (RowData *rowData in self.songData) {
                 iTunesFileTrack *track = rowData.fileTrack;
                 
-                NSDictionary *songNewData = tracks[y];
-                if ([songNewData count] == 0) {
-                    songNewData = nil;
-                }
-                
-                BOOL isChecked = NO;
-                if (songNewData == nil) {
-                    NSLog(@"No metadata available for song %@ (ID: %li)",[track name], rowData.trackId);
-                }
-                else {
-                    NSMutableDictionary *blah = [songNewData mutableCopy];
-                    
-                    NSLog(@"Metadata for song %@ found in the %@ store",[track name], songNewData[@"country"]);
-                    
-                    NSDate *releaseDate = songNewData[@"releaseDate"];
-                    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:releaseDate];
-                    blah[@"year"] = @(components.year);
-                    songNewData = blah;
-                    
-                    if ([self isTrackInfoDifferent:track newInfo:songNewData]) {
-                        isChecked = YES;
+                if (rowData.officialInfo == nil) {                
+                    NSDictionary *songNewData = matchedTracks[@(rowData.trackId)];
+                    if (songNewData == nil) {
+                        NSLog(@"No metadata available for song %@ (ID: %li)",[track name], rowData.trackId);
+                    }
+                    else {
+                        [cache addTrackInfo:rowData.trackId
+                                countryCode:songNewData[@"countryCode"]
+                                       info:songNewData];
+                        rowData.officialInfo = songNewData;
+                        NSLog(@"Metadata for song %@ found in the %@ store",[track name], songNewData[@"country"]);
                     }
                 }
                 
-                rowData.officialInfo = songNewData;
-                rowData.fileTrack = track;
-                rowData.isDifferent = [self isTrackInfoDifferent:track newInfo:songNewData];
+                rowData.isDifferent = [self isTrackInfoDifferent:track newInfo:rowData.officialInfo];
                 
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
                     [self.songTable reloadData];

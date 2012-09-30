@@ -30,28 +30,28 @@
     return libPlaylists[0];
 }
 
-+ (NSNumber *)fileTrackId:(iTunesFileTrack *)track {
++ (NSUInteger)fileTrackId:(iTunesFileTrack *)track {
     if (!([[track kind] isEqualToString:@"Matched AAC audio file"])) {
-        return nil;
+        return 0;
     }
     
     NSData *file = [NSData dataWithContentsOfURL:[track location]];
     if (file == nil) {
         NSLog(@"Could not read file.");
-        return nil;
+        return 0;
         
     }
 
     NSRange range = [file rangeOfData:[@"song" dataUsingEncoding:NSUTF8StringEncoding] options:0 range:NSMakeRange(0, 700)];
     if (range.location == NSNotFound) {
         NSLog(@"SONG ID NOT FOUND!!!");
-        return nil;
+        return 0;
     }
     
     NSData *iTunesIDData = [file subdataWithRange:NSMakeRange(range.location+4, 4)];
     int value = CFSwapInt32BigToHost(*(int*)([iTunesIDData bytes]));
     
-    return @(value);
+    return value;
 }
 
 @end

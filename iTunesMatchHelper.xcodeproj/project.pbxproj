@@ -18,6 +18,8 @@
 		D80D37DE15FBF85A00D320D7 /* iTunesLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = D80D37DD15FBF85A00D320D7 /* iTunesLibrary.m */; };
 		D80D37E115FC0D9F00D320D7 /* RowData.m in Sources */ = {isa = PBXBuildFile; fileRef = D80D37E015FC0D9E00D320D7 /* RowData.m */; };
 		D80D37E715FC591F00D320D7 /* TrackView.m in Sources */ = {isa = PBXBuildFile; fileRef = D80D37E615FC591F00D320D7 /* TrackView.m */; };
+		D834E05D1617DEA200EE473B /* LocalCache.m in Sources */ = {isa = PBXBuildFile; fileRef = D834E05C1617DEA200EE473B /* LocalCache.m */; };
+		D834E0621617EF5100EE473B /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D834E0611617EF5100EE473B /* libsqlite3.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,7 +38,7 @@
 		0942397F149D6D5000B75A38 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		09423987149D6D5000B75A38 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		0942399D149D6D6C00B75A38 /* iTunesMatchHelper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = iTunesMatchHelper.entitlements; sourceTree = "<group>"; };
-		0942399E149D6EDC00B75A38 /* iTunes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iTunes.h; path = iTunesMatchHelper/iTunes.h; sourceTree = "<group>"; };
+		0942399E149D6EDC00B75A38 /* iTunes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iTunes.h; sourceTree = "<group>"; };
 		0942399F149D707D00B75A38 /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
 		D80D37D815FBD6F800D320D7 /* iTunesApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iTunesApi.h; sourceTree = "<group>"; };
 		D80D37D915FBD6F800D320D7 /* iTunesApi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iTunesApi.m; sourceTree = "<group>"; };
@@ -46,6 +48,9 @@
 		D80D37E015FC0D9E00D320D7 /* RowData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RowData.m; sourceTree = "<group>"; };
 		D80D37E515FC591E00D320D7 /* TrackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackView.h; sourceTree = "<group>"; };
 		D80D37E615FC591F00D320D7 /* TrackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackView.m; sourceTree = "<group>"; };
+		D834E05B1617DEA100EE473B /* LocalCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalCache.h; sourceTree = "<group>"; };
+		D834E05C1617DEA200EE473B /* LocalCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalCache.m; sourceTree = "<group>"; };
+		D834E0611617EF5100EE473B /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D834E0621617EF5100EE473B /* libsqlite3.dylib in Frameworks */,
 				094239A0149D707D00B75A38 /* ScriptingBridge.framework in Frameworks */,
 				0942396A149D6D5000B75A38 /* Cocoa.framework in Frameworks */,
 			);
@@ -64,6 +70,7 @@
 		0942395A149D6D5000B75A38 = {
 			isa = PBXGroup;
 			children = (
+				D834E0611617EF5100EE473B /* libsqlite3.dylib */,
 				0942396F149D6D5000B75A38 /* iTunesMatchHelper */,
 				09423968149D6D5000B75A38 /* Frameworks */,
 				09423966149D6D5000B75A38 /* Products */,
@@ -81,7 +88,6 @@
 		09423968149D6D5000B75A38 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0942399E149D6EDC00B75A38 /* iTunes.h */,
 				0942399F149D707D00B75A38 /* ScriptingBridge.framework */,
 				09423969149D6D5000B75A38 /* Cocoa.framework */,
 				09423987149D6D5000B75A38 /* SenTestingKit.framework */,
@@ -114,6 +120,7 @@
 		09423970149D6D5000B75A38 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				0942399E149D6EDC00B75A38 /* iTunes.h */,
 				09423971149D6D5000B75A38 /* iTunesMatchHelper-Info.plist */,
 				09423972149D6D5000B75A38 /* InfoPlist.strings */,
 				09423975149D6D5000B75A38 /* main.m */,
@@ -136,6 +143,8 @@
 				D80D37E015FC0D9E00D320D7 /* RowData.m */,
 				D80D37E515FC591E00D320D7 /* TrackView.h */,
 				D80D37E615FC591F00D320D7 /* TrackView.m */,
+				D834E05B1617DEA100EE473B /* LocalCache.h */,
+				D834E05C1617DEA200EE473B /* LocalCache.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -209,6 +218,7 @@
 				D80D37DE15FBF85A00D320D7 /* iTunesLibrary.m in Sources */,
 				D80D37E115FC0D9F00D320D7 /* RowData.m in Sources */,
 				D80D37E715FC591F00D320D7 /* TrackView.m in Sources */,
+				D834E05D1617DEA200EE473B /* LocalCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

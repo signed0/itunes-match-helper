@@ -1,6 +1,5 @@
 /*
  * iTunes.h
- * From https://github.com/TooTallNate/node-iTunes/blob/master/src/iTunes.h
  */
 
 #import <AppKit/AppKit.h>

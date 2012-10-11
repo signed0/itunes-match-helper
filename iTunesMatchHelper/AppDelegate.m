@@ -14,6 +14,9 @@
 #import "RowData.h"
 #import "LocalCache.h"
 
+#define kApplicationSupportName @"iTunes Match Helper"
+#define kCacheFilename @"cache.sqlite"
+
 @interface AppDelegate ()
 
 @property (nonatomic, strong) NSMutableArray *songData;
@@ -284,10 +287,44 @@
     return result;
 }
 
++ (NSString *)applicationSupportDirectory {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory,
+                                                         NSUserDomainMask,
+                                                         YES);
+    if ([paths count] != 1) {
+        return nil;
+    }
+    
+    NSString *path = [paths[0] stringByAppendingPathComponent:kApplicationSupportName];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    BOOL isDir;
+    if (![fileManager fileExistsAtPath:path isDirectory:&isDir]) {
+        NSError * error = nil;
+        [fileManager createDirectoryAtPath:path
+                                  withIntermediateDirectories:NO
+                                                   attributes:nil
+                                                        error:&error];
+        if (error != nil) {
+            NSLog(@"error creating directory: %@", error);
+            return nil;
+        }
+    }
+    
+    return path;
+}
+
 - (IBAction)fetchLibrary:(id)sender {
     self.doCancel = NO;
     
-    LocalCache *cache = [[LocalCache alloc] initWithPath:@"cache.sqlite"];
+    NSString *appSupportDir = [AppDelegate applicationSupportDirectory];
+    if (appSupportDir == nil) {
+        return;
+    }
+    
+    NSString *cachePath = [appSupportDir stringByAppendingPathComponent:kCacheFilename];    
+    LocalCache *cache = [[LocalCache alloc] initWithPath:cachePath];
     
     if (self.canCancel) {
         self.doCancel = YES;

@@ -70,7 +70,6 @@
 		0942395A149D6D5000B75A38 = {
 			isa = PBXGroup;
 			children = (
-				D834E0611617EF5100EE473B /* libsqlite3.dylib */,
 				0942396F149D6D5000B75A38 /* iTunesMatchHelper */,
 				09423968149D6D5000B75A38 /* Frameworks */,
 				09423966149D6D5000B75A38 /* Products */,
@@ -88,6 +87,7 @@
 		09423968149D6D5000B75A38 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D834E0611617EF5100EE473B /* libsqlite3.dylib */,
 				0942399F149D707D00B75A38 /* ScriptingBridge.framework */,
 				09423969149D6D5000B75A38 /* Cocoa.framework */,
 				09423987149D6D5000B75A38 /* SenTestingKit.framework */,

@@ -10,7 +10,6 @@
 		0942396A149D6D5000B75A38 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09423969149D6D5000B75A38 /* Cocoa.framework */; };
 		09423974149D6D5000B75A38 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 09423972149D6D5000B75A38 /* InfoPlist.strings */; };
 		09423976149D6D5000B75A38 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 09423975149D6D5000B75A38 /* main.m */; };
-		0942397A149D6D5000B75A38 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 09423978149D6D5000B75A38 /* Credits.rtf */; };
 		0942397D149D6D5000B75A38 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0942397C149D6D5000B75A38 /* AppDelegate.m */; };
 		09423980149D6D5000B75A38 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0942397E149D6D5000B75A38 /* MainMenu.xib */; };
 		094239A0149D707D00B75A38 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0942399F149D707D00B75A38 /* ScriptingBridge.framework */; };
@@ -32,7 +31,6 @@
 		09423973149D6D5000B75A38 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		09423975149D6D5000B75A38 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		09423977149D6D5000B75A38 /* iTunesMatchHelper-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iTunesMatchHelper-Prefix.pch"; sourceTree = "<group>"; };
-		09423979149D6D5000B75A38 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		0942397B149D6D5000B75A38 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		0942397C149D6D5000B75A38 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		0942397F149D6D5000B75A38 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -125,7 +123,6 @@
 				09423972149D6D5000B75A38 /* InfoPlist.strings */,
 				09423975149D6D5000B75A38 /* main.m */,
 				09423977149D6D5000B75A38 /* iTunesMatchHelper-Prefix.pch */,
-				09423978149D6D5000B75A38 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -200,7 +197,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				09423974149D6D5000B75A38 /* InfoPlist.strings in Resources */,
-				0942397A149D6D5000B75A38 /* Credits.rtf in Resources */,
 				09423980149D6D5000B75A38 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -231,14 +227,6 @@
 				09423973149D6D5000B75A38 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		09423978149D6D5000B75A38 /* Credits.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				09423979149D6D5000B75A38 /* en */,
-			);
-			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
 		0942397E149D6D5000B75A38 /* MainMenu.xib */ = {

@@ -31,7 +31,16 @@
 }
 
 + (NSUInteger)fileTrackId:(iTunesFileTrack *)track {
-    if (!([[track kind] isEqualToString:@"Matched AAC audio file"])) {
+	// Add the string of different languages here
+    if (
+		// Your language here
+		//!([[track kind] isEqualToString:@"String for AAC-file"]) &&
+
+		// German
+		!([[track kind] isEqualToString:@"Passende AAC-Audiodatei"]) &&
+
+		// English
+		!([[track kind] isEqualToString:@"Matched AAC audio file"])) {
         return 0;
     }
     

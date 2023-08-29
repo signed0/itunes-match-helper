@@ -457,7 +457,7 @@
                 [self.scanButton setTitle:@"Update Library"];
                 self.updatingLibrary = YES;
                 self.canCancel = NO;
-                [self.progressLabel setStringValue:@"Finished fetching metadata. Click 'Update Library to update checked songs."];
+                [self.progressLabel setStringValue:@"Finished fetching metadata. Click 'Update Library' to update checked songs."];
             });
         });
     } else if (self.updatingLibrary) {
